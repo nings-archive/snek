@@ -2,8 +2,6 @@
 # Python-pygame clone of the classic snake game
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
-# TODO: Add food spawns
-# TODO: Add collision with food (+ growth)
 # TODO: Add end game conditionals
 # TODO: Add play again option
 # TODO: Add score pop ups
@@ -13,14 +11,15 @@
 
 import pygame, sys
 from pygame.locals import *
+import random
 
 FPS = 8
 global SIZE
 SIZE = 20
 WINDOW_WIDTH = 360
-xGrids = WINDOW_WIDTH / SIZE
+xGrid = WINDOW_WIDTH // SIZE
 WINDOW_HEIGHT = 480
-yGrids = WINDOW_HEIGHT / SIZE
+yGrid = WINDOW_HEIGHT // SIZE
 WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
@@ -31,11 +30,11 @@ BLACK  = (  0,   0,   0)
 ORANGE = (255, 128,   0)
 UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
 
-# TAIL
+
 class Tail:
     history = [
-            pygame.Rect(WINDOW_WIDTH/2 - 40, WINDOW_HEIGHT/2, SIZE, SIZE),
-            pygame.Rect(WINDOW_WIDTH/2 - 20, WINDOW_HEIGHT/2, SIZE, SIZE)
+            pygame.Rect(WINDOW_WIDTH//2 - 40, WINDOW_HEIGHT//2, SIZE, SIZE),
+            pygame.Rect(WINDOW_WIDTH//2 - 20, WINDOW_HEIGHT//2, SIZE, SIZE)
             ]
     score = 0
 
@@ -44,11 +43,11 @@ class Tail:
             pygame.draw.rect(DISPLAYSURF, WHITE, each)
 tail = Tail()
 
-# SNAKE
+
 class Snake:
     # spatial
-    x = WINDOW_WIDTH / 2  # start x
-    y = WINDOW_HEIGHT / 2  # start y
+    x = WINDOW_WIDTH // 2  # start x
+    y = WINDOW_HEIGHT // 2  # start y
     head = pygame.Rect(x, y, SIZE, SIZE)  #pygame Rect Obj
     collide = False # turns True in loop if collide with border, or tail
     # directional
@@ -58,6 +57,19 @@ class Snake:
         self.head = pygame.Rect(self.x, self.y, SIZE, SIZE)
 snake = Snake()
 
+
+class Food:
+    rX = random.randint(0, xGrid - 1) 
+    rY = random.randint(0, yGrid - 1)
+    point = pygame.Rect(rX * SIZE, rY * SIZE, SIZE, SIZE)
+
+    def new(self):
+        self.rX = random.randint(0, xGrid - 1)
+        self.rY = random.randint(0, yGrid - 1)
+        self.point = pygame.Rect(self.rX * SIZE, self.rY * SIZE, SIZE, SIZE)
+food = Food()
+
+
 def main(snake, tail):
     pygame.init()
     pygame.display.set_caption("21st Century Snakedown")
@@ -66,6 +78,7 @@ def main(snake, tail):
         DISPLAYSURF.fill(BLACK)
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         tail.draw()
+        pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
 
         if len(tail.history) == tail.score + 2:
             tail.history = tail.history[1:]
@@ -95,6 +108,11 @@ def main(snake, tail):
         elif snake.direction == LEFT:
             snake.x -= SIZE
         snake.update()
+
+        # BUG TODO: prevent spawning of food inside snake.head and tail.history
+        if snake.head.collidepoint((food.point.centerx), (food.point.centery)):
+            tail.score += 1
+            food.new()
 
         pygame.display.update()
         fpsClock.tick(FPS)
