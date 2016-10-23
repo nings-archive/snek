@@ -2,13 +2,25 @@
 # Python-pygame clone of the classic snake game
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
+# TODO: Add food spawns
+# TODO: Add collision with food (+ growth)
+# TODO: Add end game conditionals
+# TODO: Add play again option
+# TODO: Add score pop ups
+# TODO: Add session high scores
+# TODO: Add wasd controls
+# TODO: Fix 180 turn exploit
 
 import pygame, sys
 from pygame.locals import *
 
-FPS = 8  # set 1 for debugging mode, 8 for normal
+FPS = 8
+global SIZE
+SIZE = 20
 WINDOW_WIDTH = 360
+xGrids = WINDOW_WIDTH / SIZE
 WINDOW_HEIGHT = 480
+yGrids = WINDOW_HEIGHT / SIZE
 WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
@@ -21,7 +33,6 @@ UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
 
 # TAIL
 class Tail:
-    SIZE = 20
     history = [
             pygame.Rect(WINDOW_WIDTH/2 - 40, WINDOW_HEIGHT/2, SIZE, SIZE),
             pygame.Rect(WINDOW_WIDTH/2 - 20, WINDOW_HEIGHT/2, SIZE, SIZE)
@@ -36,7 +47,6 @@ tail = Tail()
 # SNAKE
 class Snake:
     # spatial
-    SIZE = 20
     x = WINDOW_WIDTH / 2  # start x
     y = WINDOW_HEIGHT / 2  # start y
     head = pygame.Rect(x, y, SIZE, SIZE)  #pygame Rect Obj
@@ -45,7 +55,7 @@ class Snake:
     direction = RIGHT  # start right
 
     def update(self):
-        self.head = pygame.Rect(self.x, self.y, self.SIZE, self.SIZE)
+        self.head = pygame.Rect(self.x, self.y, SIZE, SIZE)
 snake = Snake()
 
 def main(snake, tail):
@@ -62,13 +72,10 @@ def main(snake, tail):
         tail.history.append(snake.head)
 
         for event in pygame.event.get():
-            # exit
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             # change directions
-            # TODO: add wasd controls
-            # TODO: snake can still turn 180 with two rapid taps
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and snake.direction != DOWN:
                     snake.direction = UP
@@ -80,13 +87,13 @@ def main(snake, tail):
                     snake.direction = RIGHT
 
         if snake.direction == UP:
-            snake.y -= snake.SIZE
+            snake.y -= SIZE
         elif snake.direction == DOWN:
-            snake.y += snake.SIZE
+            snake.y += SIZE
         elif snake.direction == RIGHT:
-            snake.x += snake.SIZE
+            snake.x += SIZE
         elif snake.direction == LEFT:
-            snake.x -= snake.SIZE
+            snake.x -= SIZE
         snake.update()
 
         pygame.display.update()
