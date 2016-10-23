@@ -52,6 +52,7 @@ class Snake:
     collide = False # turns True in loop if collide with border, or tail
     # directional
     direction = RIGHT  # start right
+    change = RIGHT
 
     def update(self):
         self.head = pygame.Rect(self.x, self.y, SIZE, SIZE)
@@ -91,14 +92,15 @@ def main(snake, tail):
             # change directions
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and snake.direction != DOWN:
-                    snake.direction = UP
+                    snake.change = UP
                 elif event.key == pygame.K_DOWN and snake.direction != UP:
-                    snake.direction = DOWN
+                    snake.change = DOWN
                 elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
-                    snake.direction = LEFT
+                    snake.change = LEFT
                 elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
-                    snake.direction = RIGHT
+                    snake.change = RIGHT
 
+        snake.direction = snake.change
         if snake.direction == UP:
             snake.y -= SIZE
         elif snake.direction == DOWN:
@@ -109,18 +111,19 @@ def main(snake, tail):
             snake.x -= SIZE
         snake.update()
 
-        # BUG TODO: prevent spawning of food inside snake.head and tail.history
+        # snake eats food
         if snake.head.collidepoint((food.point.centerx), (food.point.centery)):
             tail.score += 1
 
+        # returns True if food is within snake
         def foodblock(snake, tail):
+            foodintail = False
             for block in tail.history:
                 if block.collidepoint((food.point.centerx), (food.point.centery)):
                     foodintail = True
-                else:
-                    foodintail = False
             foodinhead = snake.head.collidepoint((food.point.centerx), (food.point.centery))
             return foodintail or foodinhead
+        # if food is within snake, respawn food, and test again if it is within snake, and loop
         while foodblock(snake, tail):
             food.new()
 
