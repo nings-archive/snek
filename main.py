@@ -6,7 +6,7 @@
 import pygame, sys
 from pygame.locals import *
 
-FPS = 3
+FPS = 5
 WINDOW_WIDTH = 360
 WINDOW_HEIGHT = 480
 WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -40,15 +40,26 @@ def main(snake):
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
 
         for event in pygame.event.get():
+            # exit
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            # change directions TODO: add wasd controls
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    snake.direction = UP
+                elif event.key == pygame.K_DOWN:
+                    snake.direction = DOWN
+                elif event.key == pygame.K_LEFT:
+                    snake.direction = LEFT
+                elif event.key == pygame.K_RIGHT:
+                    snake.direction = RIGHT
 
         if snake.direction == UP:
-            snake.y += snake.SIZE
+            snake.y -= snake.SIZE
             snake.head.top = snake.y
         elif snake.direction == DOWN:
-            snake.y -= snake.SIZE
+            snake.y += snake.SIZE
             snake.head.top = snake.y
         elif snake.direction == RIGHT:
             snake.x += snake.SIZE
