@@ -112,6 +112,16 @@ def main(snake, tail):
         # BUG TODO: prevent spawning of food inside snake.head and tail.history
         if snake.head.collidepoint((food.point.centerx), (food.point.centery)):
             tail.score += 1
+
+        def foodblock(snake, tail):
+            for block in tail.history:
+                if block.collidepoint((food.point.centerx), (food.point.centery)):
+                    foodintail = True
+                else:
+                    foodintail = False
+            foodinhead = snake.head.collidepoint((food.point.centerx), (food.point.centery))
+            return foodintail or foodinhead
+        while foodblock(snake, tail):
             food.new()
 
         pygame.display.update()
