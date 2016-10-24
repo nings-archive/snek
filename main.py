@@ -6,8 +6,8 @@
 # TODO: Add play again option
 # TODO: Add score pop ups
 # TODO: Add session high scores
-# TODO: Add wasd controls
-# TODO: Fix handling?
+# TODO: Add death sounds
+# TODO: Make snake blink on eat?
 
 import pygame, sys
 from pygame.locals import *
@@ -24,7 +24,6 @@ BOTTOMBORDER = pygame.Rect(0, WINDOW_HEIGHT, WINDOW_WIDTH, 1)
 LEFTBORDER = pygame.Rect(-1, 0, 1, WINDOW_HEIGHT)
 RIGHTBORDER = pygame.Rect(WINDOW_WIDTH, 0, 1, WINDOW_HEIGHT)
 WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
-pygame.display.set_caption("21st Century Snakedown")
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 gameState = True
@@ -103,6 +102,7 @@ def game(snake, tail):
     global gameState
     while gameState:
         DISPLAYSURF.fill(BLACK)
+        pygame.display.set_caption("21st Century Snakedown")
         ''' TODO: Score display, use images instead of fonts
         scoreObj = pygame.font.Font('freesansbold.tff', 32)
         scoreSurfObj = scoreObj.render(str(score), True, GREY, GREY)
@@ -181,6 +181,7 @@ def lose(snake, tail, food):
     global gameState
     while not gameState:
         DISPLAYSURF.fill(BLACK)
+        pygame.display.set_caption("21st Century Snakedown")
         if tail.drawcount % 3 == 0:
             pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         else:
