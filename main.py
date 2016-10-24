@@ -2,7 +2,7 @@
 # Python-pygame clone of the classic snake game
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
-# TODO: Add end game conditionals
+# TODO: Add end game screen
 # TODO: Add play again option
 # TODO: Add score pop ups
 # TODO: Add session high scores
@@ -42,10 +42,20 @@ class Tail:
             pygame.Rect(WINDOW_WIDTH//2 - 20, WINDOW_HEIGHT//2, SIZE, SIZE)
             ]
     score = 0
+    drawcount = 0
 
     def draw(self):
         for each in self.history:
             pygame.draw.rect(DISPLAYSURF, WHITE, each)
+
+    def drawDead(self):
+        if self.drawcount % 3 == 0:
+            for each in self.history:
+                pygame.draw.rect(DISPLAYSURF, WHITE, each)
+        else:
+            for each in self.history:
+                pygame.draw.rect(DISPLAYSURF, BLACK, each)
+        self.drawcount += 1
 
     def new(self):
         self.history = [
@@ -93,6 +103,13 @@ def game(snake, tail):
     global gameState
     while gameState:
         DISPLAYSURF.fill(BLACK)
+        ''' TODO: Score display, use images instead of fonts
+        scoreObj = pygame.font.Font('freesansbold.tff', 32)
+        scoreSurfObj = scoreObj.render(str(score), True, GREY, GREY)
+        scoreRectObj = scoreSurfObj.get_rect()
+        scoreRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
+        DISPLAYSURF.blit(scoreSurfObj, scoreRectObj)
+        '''
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         tail.draw()
         pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
@@ -107,13 +124,13 @@ def game(snake, tail):
                 sys.exit()
             # change directions
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and snake.direction != DOWN:
+                if event.key in (K_UP, K_w) and snake.direction != DOWN:
                     snake.change = UP
-                elif event.key == pygame.K_DOWN and snake.direction != UP:
+                elif event.key in (K_DOWN, K_s) and snake.direction != UP:
                     snake.change = DOWN
-                elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
+                elif event.key in (K_LEFT, K_a) and snake.direction != RIGHT:
                     snake.change = LEFT
-                elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
+                elif event.key in (K_RIGHT, K_d) and snake.direction != LEFT:
                     snake.change = RIGHT
 
         snake.direction = snake.change
@@ -164,8 +181,11 @@ def lose(snake, tail, food):
     global gameState
     while not gameState:
         DISPLAYSURF.fill(BLACK)
-        pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
-        tail.draw()
+        if tail.drawcount % 3 == 0:
+            pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
+        else:
+            pygame.draw.rect(DISPLAYSURF, BLACK, snake.head)
+        tail.drawDead()
         pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
 
         for event in pygame.event.get():
