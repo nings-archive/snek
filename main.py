@@ -1,4 +1,4 @@
-# 21st Century Snakedown
+# Snakedown
 # Python-pygame clone of the classic snake game
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
@@ -102,7 +102,7 @@ def game(snake, tail):
     global gameState
     while gameState:
         DISPLAYSURF.fill(BLACK)
-        pygame.display.set_caption("21st Century Snakedown")
+        pygame.display.set_caption("Snakedown")
         ''' TODO: Score display, use images instead of fonts
         scoreObj = pygame.font.Font('freesansbold.tff', 32)
         scoreSurfObj = scoreObj.render(str(score), True, GREY, GREY)
@@ -181,7 +181,7 @@ def lose(snake, tail, food):
     global gameState
     while not gameState:
         DISPLAYSURF.fill(BLACK)
-        pygame.display.set_caption("21st Century Snakedown")
+        pygame.display.set_caption("Snakedown")
         if tail.drawcount % 3 == 0:
             pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         else:
