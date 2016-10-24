@@ -7,7 +7,7 @@
 # TODO: Add score pop ups
 # TODO: Add session high scores
 # TODO: Add wasd controls
-# TODO: Fix 180 turn exploit
+# TODO: Fix handling?
 
 import pygame, sys
 from pygame.locals import *
@@ -21,6 +21,7 @@ xGrid = WINDOW_WIDTH // SIZE
 WINDOW_HEIGHT = 480
 yGrid = WINDOW_HEIGHT // SIZE
 WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
+pygame.display.set_caption("21st Century Snakedown")
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 # COLOURS  R :  G :  B
@@ -71,10 +72,7 @@ class Food:
 food = Food()
 
 
-def main(snake, tail):
-    pygame.init()
-    pygame.display.set_caption("21st Century Snakedown")
-
+def game(snake, tail):
     while True:
         DISPLAYSURF.fill(BLACK)
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
@@ -129,6 +127,11 @@ def main(snake, tail):
 
         pygame.display.update()
         fpsClock.tick(FPS)
+
+
+def main(snake, tail):
+    pygame.init()
+    game(snake, tail)
 
 
 while __name__ == '__main__':
