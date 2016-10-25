@@ -4,4 +4,4 @@
 
 ## Installation
 
-Simply download and unzip the snakedown[version].zip file, [like so](ningyuan.io/snakedown1.3.webm).
+Simply download and unzip the snakedown[version].zip file, [like so](http://ningyuan.io/snakedown1.3.webm).
