@@ -1,5 +1,5 @@
 # Snakedown
-# Python-pygame clone of the classic snake game
+# Python-pygame clone of the classic video game, Snake
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
 # TODO: Add end game screen
@@ -16,8 +16,9 @@ import random
 FPS = 8
 SIZE = 20
 WINDOW_WIDTH = 360
-xGrid = WINDOW_WIDTH // SIZE
 WINDOW_HEIGHT = 480
+assert WINDOW_WIDTH % SIZE == 0 and WINDOW_HEIGHT % SIZE == 0
+xGrid = WINDOW_WIDTH // SIZE
 yGrid = WINDOW_HEIGHT // SIZE
 TOPBORDER = pygame.Rect(0, -1, WINDOW_WIDTH, 1)
 BOTTOMBORDER = pygame.Rect(0, WINDOW_HEIGHT, WINDOW_WIDTH, 1)
