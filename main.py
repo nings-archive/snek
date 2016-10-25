@@ -13,6 +13,8 @@ import pygame, sys
 from pygame.locals import *
 import random
 
+pygame.init()
+
 FPS = 8
 SIZE = 20
 WINDOW_WIDTH = 360
@@ -208,7 +210,6 @@ def lose(snake, tail, food):
 
 def main(snake, tail):
     while True:
-        pygame.init()
         game(snake, tail)
         lose(snake, tail, food)
 
