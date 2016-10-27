@@ -30,6 +30,7 @@ WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 gameState = True
+lingertime = 0
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
 GREY   = ( 50,  50,  50)
@@ -128,6 +129,7 @@ def scorepop(score, snake):
 
 def game(snake, tail):
     global gameState
+    global lingertime
     while gameState:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption("snek")
@@ -207,6 +209,7 @@ def game(snake, tail):
             random.shuffle(deathogg)
             deathsound = pygame.mixer.Sound(deathogg[0])
             deathsound.play()
+            lingertime = FPS * 2
 
         pygame.display.update()
         fpsClock.tick(FPS)
@@ -214,15 +217,19 @@ def game(snake, tail):
 
 def lose(snake, tail, food):
     global gameState
+    global lingertime
     while not gameState:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption("snek")
-        if tail.drawcount % 3 == 0:
-            pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
-        else:
-            pygame.draw.rect(DISPLAYSURF, BLACK, snake.head)
-        tail.drawDead()
-        pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
+        if lingertime > 0:
+            if tail.drawcount % 3 == 0:
+                pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
+                pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
+            else:
+                pygame.draw.rect(DISPLAYSURF, BLACK, snake.head)
+            tail.drawDead()
+            lingertime -= 1
+        scorepop(tail.score, snake)
 
         for event in pygame.event.get():
             if event.type == QUIT:
