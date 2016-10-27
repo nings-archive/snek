@@ -34,7 +34,7 @@ lingertime = 0
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
 GREY   = ( 50,  50,  50)
-GREYa  = (100, 100, 100)
+GREYa  = (150, 150, 150)
 BLACK  = (  0,   0,   0)
 ORANGE = (255, 128,   0)
 UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
@@ -54,7 +54,10 @@ deathogg = [
         r'media\death3.ogg',
         r'media\death4.ogg'
         ]
-fontObj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*5)
+font5Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*5)
+font4Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*4)
+font1Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*1)
+font05Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE//2)
 
 
 class Tail:
@@ -121,18 +124,52 @@ food = Food()
 
 
 def scorepop(score, snake):
-    textSurfaceObj = fontObj.render(str(score), True, GREY)
+    textSurfaceObj = font5Obj.render(str(score), True, GREY)
     textRectObj = textSurfaceObj.get_rect()
     textRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
     DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
+
+def start():
+    blinkcount = 0
+    while True:
+        DISPLAYSURF.fill(BLACK)
+        pygame.display.set_caption('snek')
+
+        textSurfaceObj = font4Obj.render('snek', True, GREYa)
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//2.8)
+        DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+
+        textSurfaceObj = font1Obj.render('by ningyuan', True, GREYa)
+        textRectObj = textSurfaceObj.get_rect()
+        textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//2)
+        DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+
+        if blinkcount % 8 <= 3:
+            textSurfaceObj = font05Obj.render('SPACEBAR to continue', True, GREYa)
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//1.5)
+            DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+        blinkcount += 1
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    return
+
+        pygame.display.update()
+        fpsClock.tick(FPS)
 
 def game(snake, tail):
     global gameState
     global lingertime
     while gameState:
         DISPLAYSURF.fill(BLACK)
-        pygame.display.set_caption("snek")
+        pygame.display.set_caption('snek')
         ''' TODO: Score display, use images instead of fonts
         scoreObj = pygame.font.Font('freesansbold.tff', 32)
         scoreSurfObj = scoreObj.render(str(score), True, GREY, GREY)
@@ -220,7 +257,8 @@ def lose(snake, tail, food):
     global lingertime
     while not gameState:
         DISPLAYSURF.fill(BLACK)
-        pygame.display.set_caption("snek")
+        pygame.display.set_caption('snek')
+        scorepop(tail.score, snake)
         if lingertime > 0:
             if tail.drawcount % 3 == 0:
                 pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
@@ -229,7 +267,6 @@ def lose(snake, tail, food):
                 pygame.draw.rect(DISPLAYSURF, BLACK, snake.head)
             tail.drawDead()
             lingertime -= 1
-        scorepop(tail.score, snake)
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -248,6 +285,7 @@ def lose(snake, tail, food):
    
 
 def main(snake, tail):
+    start()
     while True:
         game(snake, tail)
         lose(snake, tail, food)
