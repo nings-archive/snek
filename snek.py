@@ -2,10 +2,10 @@
 # Python-pygame clone of the classic video game, Snake
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
-# TODO: Add end game screen
-# TODO: Add score pop ups
-# TODO: Add session high scores
-# TODO: Make snake blink on eat?
+# TODO: K_ESC goes to start screen
+# TODO: i.e. make game state three-switch, TYPE<int> 0, 1, 2
+# TODO: BG Music
+# TODO: add icon
 
 import pygame, sys
 from pygame.locals import *
@@ -31,10 +31,12 @@ fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 gameState = True
 lingertime = 0
+sessionhigh = 0
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
 GREY   = ( 50,  50,  50)
 GREYa  = (150, 150, 150)
+GREYb  = (100, 100, 100)
 BLACK  = (  0,   0,   0)
 ORANGE = (255, 128,   0)
 UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
@@ -56,6 +58,7 @@ deathogg = [
         ]
 font5Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*5)
 font4Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*4)
+font3Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*3)
 font1Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*1)
 font05Obj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE//2)
 
@@ -76,9 +79,6 @@ class Tail:
         if self.drawcount % 3 == 0:
             for each in self.history:
                 pygame.draw.rect(DISPLAYSURF, WHITE, each)
-        else:
-            for each in self.history:
-                pygame.draw.rect(DISPLAYSURF, BLACK, each)
         self.drawcount += 1
 
     def new(self):
@@ -123,10 +123,10 @@ class Food:
 food = Food()
 
 
-def scorepop(score, snake):
-    textSurfaceObj = font5Obj.render(str(score), True, GREY)
+def scorepop(score, snake, colour):
+    textSurfaceObj = font5Obj.render(str(score), True, colour)
     textRectObj = textSurfaceObj.get_rect()
-    textRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
+    textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//2)
     DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
 
@@ -167,6 +167,7 @@ def start():
 def game(snake, tail):
     global gameState
     global lingertime
+    global sessionhigh
     while gameState:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
@@ -177,7 +178,7 @@ def game(snake, tail):
         scoreRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
         DISPLAYSURF.blit(scoreSurfObj, scoreRectObj)
         '''
-        scorepop(tail.score, snake)
+        scorepop(tail.score, snake, GREY)
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         tail.draw()
         pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
@@ -247,6 +248,8 @@ def game(snake, tail):
             deathsound = pygame.mixer.Sound(deathogg[0])
             deathsound.play()
             lingertime = FPS * 2
+            if tail.score > sessionhigh:
+                sessionhigh = tail.score
 
         pygame.display.update()
         fpsClock.tick(FPS)
@@ -255,18 +258,29 @@ def game(snake, tail):
 def lose(snake, tail, food):
     global gameState
     global lingertime
+    global sessionhigh
     while not gameState:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
-        scorepop(tail.score, snake)
+        scorepop(tail.score, snake, GREY)
         if lingertime > 0:
             if tail.drawcount % 3 == 0:
                 pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
                 pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
-            else:
-                pygame.draw.rect(DISPLAYSURF, BLACK, snake.head)
             tail.drawDead()
             lingertime -= 1
+        if lingertime == 0:
+            # UH OH
+            scorepop(tail.score, snake, GREYb)
+            textSurfaceObj = font3Obj.render('UH OH', True, GREYb)
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//4)
+            DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+            #  SESSION HIGH: xxx
+            textSurfaceObj = font1Obj.render('SESSION HIGH ' + str(sessionhigh), True, GREYb)
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//1.3)
+            DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
         for event in pygame.event.get():
             if event.type == QUIT:
