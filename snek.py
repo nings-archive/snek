@@ -3,10 +3,8 @@
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
 # TODO: Add end game screen
-# TODO: Add play again option
 # TODO: Add score pop ups
 # TODO: Add session high scores
-# TODO: Add death sounds
 # TODO: Make snake blink on eat?
 
 import pygame, sys
@@ -15,6 +13,7 @@ import random
 
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
 
 FPS = 8
 SIZE = 20
@@ -33,7 +32,8 @@ DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 gameState = True
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
-GREY   = (100, 100, 100)
+GREY   = ( 50,  50,  50)
+GREYa  = (100, 100, 100)
 BLACK  = (  0,   0,   0)
 ORANGE = (255, 128,   0)
 UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
@@ -53,6 +53,7 @@ deathogg = [
         r'media\death3.ogg',
         r'media\death4.ogg'
         ]
+fontObj = pygame.font.Font(r'media\8-BIT WONDER.TTF', SIZE*5)
 
 
 class Tail:
@@ -118,6 +119,13 @@ class Food:
 food = Food()
 
 
+def scorepop(score, snake):
+    textSurfaceObj = fontObj.render(str(score), True, GREY)
+    textRectObj = textSurfaceObj.get_rect()
+    textRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
+    DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+
+
 def game(snake, tail):
     global gameState
     while gameState:
@@ -130,6 +138,7 @@ def game(snake, tail):
         scoreRectObj.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
         DISPLAYSURF.blit(scoreSurfObj, scoreRectObj)
         '''
+        scorepop(tail.score, snake)
         pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
         tail.draw()
         pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
