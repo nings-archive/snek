@@ -30,7 +30,8 @@ WINDOW_RES = (WINDOW_WIDTH, WINDOW_HEIGHT)
 fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode(WINDOW_RES)
 gameState = True
-lingertime = 0
+paused = True
+lingertime = FPS * 2
 sessionhigh = 0
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
@@ -130,9 +131,10 @@ def scorepop(score, snake, colour):
     DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
 
-def start():
+def pausedState():
     blinkcount = 0
-    while True:
+    global paused
+    while paused:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
 
@@ -158,17 +160,19 @@ def start():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    return
+                if event.key in (K_SPACE, K_p, K_ESCAPE):
+                    paused = False
 
         pygame.display.update()
         fpsClock.tick(FPS)
 
 def game(snake, tail):
+    global gamestate
+    global paused
     global gameState
     global lingertime
     global sessionhigh
-    while gameState:
+    while gameState and not paused:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
         ''' TODO: Score display, use images instead of fonts
@@ -201,6 +205,8 @@ def game(snake, tail):
                     snake.change = LEFT
                 elif event.key in (K_RIGHT, K_d) and snake.direction != LEFT:
                     snake.change = RIGHT
+                elif event.key in (K_SPACE, K_p, K_ESCAPE):
+                    paused = True
 
         snake.direction = snake.change
         if snake.direction == UP:
@@ -257,9 +263,10 @@ def game(snake, tail):
 
 def lose(snake, tail, food):
     global gameState
+    global paused
     global lingertime
     global sessionhigh
-    while not gameState:
+    while not gameState and not paused:
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
         scorepop(tail.score, snake, GREY)
@@ -269,6 +276,19 @@ def lose(snake, tail, food):
                 pygame.draw.rect(DISPLAYSURF, ORANGE, food.point)
             tail.drawDead()
             lingertime -= 1
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                # newgame
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        gameState = True
+                        snake.new()
+                        tail.new()
+                        food.new()
+                        lingertime = FPS * 2
         if lingertime == 0:
             # UH OH
             scorepop(tail.score, snake, GREYb)
@@ -282,25 +302,29 @@ def lose(snake, tail, food):
             textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//1.3)
             DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            # newgame
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    gameState = True
-                    snake.new()
-                    tail.new()
-                    food.new()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
+                # newgame
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        gameState = True
+                        snake.new()
+                        tail.new()
+                        food.new()
+                        lingertime = FPS * 2
+                    elif event.key in (K_SPACE, K_p, K_ESCAPE):
+                        paused = True
+
 
         pygame.display.update()
         fpsClock.tick(FPS)
    
 
 def main(snake, tail):
-    start()
     while True:
+        pausedState()
         game(snake, tail)
         lose(snake, tail, food)
 
