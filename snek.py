@@ -2,8 +2,6 @@
 # Python-pygame clone of the classic video game, Snake
 # Ning Yuan, ningyuan.sg@gmail.com, ningyuan.io
 # With help from wailunoob's (wailunoob2@gmail.com) snake_game
-# TODO: K_ESC goes to start screen
-# TODO: i.e. make game state three-switch, TYPE<int> 0, 1, 2
 # TODO: BG Music
 # TODO: add icon
 
