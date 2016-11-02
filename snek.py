@@ -8,6 +8,7 @@
 import pygame, sys
 from pygame.locals import *
 import random
+import os.path
 
 pygame.init()
 pygame.mixer.init()
@@ -31,6 +32,12 @@ gameState = True
 paused = True
 lingertime = FPS * 2
 sessionhigh = 0
+
+# SCORE SYSTEM, ALL-TIME
+if not os.path.isfile(r'score'):
+    with open('score', 'w') as file:
+        file.write('0')
+
 # COLOURS  R :  G :  B
 WHITE  = (255, 255, 255)
 GREY   = ( 50,  50,  50)
@@ -39,6 +46,7 @@ GREYb  = (100, 100, 100)
 BLACK  = (  0,   0,   0)
 ORANGE = (255, 128,   0)
 UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
+
 # SOUNDS
 foodogg = [
         r'media\food1.ogg',
@@ -203,7 +211,7 @@ def game(snake, tail):
                     snake.change = LEFT
                 elif event.key in (K_RIGHT, K_d) and snake.direction != LEFT:
                     snake.change = RIGHT
-                elif event.key in (K_SPACE, K_p, K_ESCAPE):
+                elif event.key in (K_p, K_ESCAPE):
                     paused = True
 
         snake.direction = snake.change
@@ -255,6 +263,13 @@ def game(snake, tail):
             if tail.score > sessionhigh:
                 sessionhigh = tail.score
 
+            # NEW HIGH SCORE?
+            with open('score', 'r') as file:
+                oldScore = file.read()
+            if tail.score > int(oldScore):
+                with open('score', 'w') as file:
+                    file.write(str(tail.score))
+
         pygame.display.update()
         fpsClock.tick(FPS)
 
@@ -268,6 +283,7 @@ def lose(snake, tail, food):
         DISPLAYSURF.fill(BLACK)
         pygame.display.set_caption('snek')
         scorepop(tail.score, snake, GREY)
+
         if lingertime > 0:
             if tail.drawcount % 3 == 0:
                 pygame.draw.rect(DISPLAYSURF, WHITE, snake.head)
@@ -287,6 +303,7 @@ def lose(snake, tail, food):
                         tail.new()
                         food.new()
                         lingertime = FPS * 2
+
         if lingertime == 0:
             # UH OH
             scorepop(tail.score, snake, GREYb)
@@ -294,10 +311,17 @@ def lose(snake, tail, food):
             textRectObj = textSurfaceObj.get_rect()
             textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//4)
             DISPLAYSURF.blit(textSurfaceObj, textRectObj)
-            #  SESSION HIGH: xxx
+            # SESSION HIGH: xxx
             textSurfaceObj = font1Obj.render('SESSION HIGH ' + str(sessionhigh), True, GREYb)
             textRectObj = textSurfaceObj.get_rect()
             textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//1.3)
+            DISPLAYSURF.blit(textSurfaceObj, textRectObj)
+            # ALLTIME HIGH: xxx
+            with open('score', 'r') as file:
+                alltimehigh = file.read()
+            textSurfaceObj = font1Obj.render('ALLTIME HIGH ' + str(alltimehigh), True, GREYb)
+            textRectObj = textSurfaceObj.get_rect()
+            textRectObj.center = (WINDOW_WIDTH//1.95, WINDOW_HEIGHT//1.2)
             DISPLAYSURF.blit(textSurfaceObj, textRectObj)
 
             for event in pygame.event.get():
@@ -312,8 +336,6 @@ def lose(snake, tail, food):
                         tail.new()
                         food.new()
                         lingertime = FPS * 2
-                    elif event.key in (K_SPACE, K_p, K_ESCAPE):
-                        paused = True
 
 
         pygame.display.update()
