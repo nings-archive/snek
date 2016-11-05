@@ -49,13 +49,13 @@ UP = 'up'; DOWN = 'down'; LEFT = 'left'; RIGHT = 'right'
 
 # SOUNDS
 foodogg = [
-        r'media\food1.ogg',
-        r'media\food2.ogg',
-        r'media\food3.ogg',
-        r'media\food4.ogg',
-        r'media\food5.ogg',
-        r'media\food6.ogg',
-        r'media\food7.ogg'
+        r'media\food1a.ogg',
+        r'media\food2a.ogg',
+        r'media\food3a.ogg',
+        r'media\food4a.ogg',
+        r'media\food5a.ogg',
+        r'media\food6a.ogg',
+        r'media\food7a.ogg'
         ]
 deathogg = [
         r'media\death1.ogg',
